@@ -12,8 +12,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.concatkdf import ConcatKDFHash
 
 
-PUB_PEM  = "ECDH_PUBLIC_KEY.PEM"
-PRIV_PEM = "ECDH_PRIVATE_KEY.PEM"
+PUB_PEM  = "TEST_01/ECDH_PUBLIC_KEY.PEM"
+PRIV_PEM = "TEST_01/ECDH_PRIVATE_KEY.PEM"
 
 
 CMD_KEYGEN = "KEYGEN"
@@ -21,13 +21,13 @@ CMD_CONCEAL = "CONCEAL"
 CMD_DECONCEAL = "DECONCEAL"
 
 
-SUCI_FILE_NAME = "SUCI_data.bin"
+SUCI_FILE_NAME = "TEST_01/SUCI_data.bin"
 
 
-KDF_APP_INFO = bytes("BTS4410 -- Oppgave 2","utf-8")
+KDF_APP_INFO = bytes("BTS4410 -- Oppgave 2","utf-8") #denne er interessant for identifisering
 
 # In SUCI this is a name used for routing the message back to Home.
-ENTITY_NAME_HOME ="sidf@home.org" 
+ENTITY_NAME_HOME ="sidf@home.org"   
 
 
 def cmd_arg(acceptable: list) -> str:
@@ -56,7 +56,7 @@ def err_print(*args, **kwargs):
 
 
 #
-# generate ECDH key-pair given the input curve
+# generate ECDH key-pair given the input curve. Med eliptisk kurve bruker man Diffie Hillman
 #
 def gen_ECDH_key_pair(curve):
     """Our ECDH key-pair generation function. Return the key-pair tuple.
@@ -86,7 +86,7 @@ def store_public_key(public_key,filename):
     return serialized_public
 
 
-def store_private_key(private_key,filename,pw):
+def store_private_key(private_key,filename,pw): #her blir privpw brukt faktisk
     """This function serialized the private key and writes it to a PEM file.
     The PEM is encrypted with the password (pw).
     It also returns the serialized key."""
@@ -119,19 +119,21 @@ def load_private_key(filename, pw):
     return(serialization.load_pem_private_key(pem_privkey_data,pw))
 
 
-def key_derivation(dhs: bytes) -> bytes:
+# Her skjer det mye: HASH KDF + SHA256 med PW fra home/KDF_APP_INFO
+def key_derivation(dhs: bytes) -> bytes: # nøkkel derivering
     return ConcatKDFHash(
         algorithm=hashes.SHA256(),length=16,
         otherinfo=KDF_APP_INFO
-    ).derive(dhs)
+    ).derive(dhs) #innebydg funksjon derive
 
 
-def add_len_prefix(bytestr: bytes) -> bytes:
+#to bytes som representerer hvor mange bytes det er
+def add_len_prefix(bytestr: bytes) -> bytes: 
     length = len(bytestr)
     return length.to_bytes(2) +  bytestr
 
-
-def add_padding(bytestr: bytes, length: int) -> bytes:
+#Padding / salt
+def add_padding(bytestr: bytes, length: int) -> bytes: 
     """Add zero padding up to desired length."""
     bs_len = len(bytestr)
     assert bs_len<=length, "The bytestr exceeds the desired length: "+str(bs_len)

@@ -1,3 +1,5 @@
+# Home.py. Vi skal utføre deconceal som 
+
 from SUCI_util import *
 from cryptography import exceptions
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -5,7 +7,8 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 PRIVPW   = bytes("BTS4410 Høsten 2025","utf-8")
 
-cmd = cmd_arg([CMD_KEYGEN,CMD_DECONCEAL])
+# cmd = cmd_arg([CMD_KEYGEN,CMD_DECONCEAL]) #her brukes keygen og deconceal som commands.
+cmd = CMD_DECONCEAL #her brukes kun deconceal
 
 if cmd==None:
     err_print("\nNo valid command given.")
@@ -43,9 +46,20 @@ if cmd==CMD_DECONCEAL:
     #    
     #      You must complete this part -- Good luck!
     #
-    #*******************************************************
-    print("\n    ***  To be completed  ***\n")
     
+
+    IV = raw_suci_data[0:16]
+    home_ID = raw_suci_data[16:80]
+
+    print("IV len:", len(IV))
+    print("Home ID len:", len(home_ID))
+
+    pubkey_len = int.from_bytes(raw_suci_data[80:82])
+
+    print("Public key len:", pubkey_len)
+    print("\n    ***  To be completed  ***\n")
+
+    #*******************************************************
     print("Home: Command completed.")    
     sys.exit(0)
 

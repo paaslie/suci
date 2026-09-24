@@ -7,11 +7,17 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 #ENTITY_NAME_USER = "privacy-sensitive-name ÆØÅ"
 ENTITY_NAME_USER = "Luke Skywalker"
 
-cmd = cmd_arg([CMD_CONCEAL])
+print("argv:", sys.argv) #sjekker bare riktig fil er begrenset til to "py"
+
+cmd = CMD_CONCEAL
+print("cmd:", cmd)
+
+print(CMD_KEYGEN) #sjekker bare at cmd kjører. Samtidig skal man egentlig generere egne KEYS i dette steget også.
 
 if cmd==None:
     err_print("\nNo valid command given.")
     sys.exit(1)
+
 
 
 if cmd==CMD_CONCEAL:
@@ -28,6 +34,7 @@ if cmd==CMD_CONCEAL:
     
     # generating session key.
     session_key = key_derivation(dhs)
+    
     
     # add length indicator and padding (as appropriate)
     # note: should check that the entity names have length <= 62 (*YOU ADD THAT*)
@@ -59,3 +66,12 @@ if cmd==CMD_CONCEAL:
 
 err_print("\nSomething went wrong:",cmd)
 sys.exit(1)
+
+"""
+Output 1 (av conceal)
+User: Concealing a permanent identifier.
+    Entity name home: 'sidf@home.org'
+    Entity name user: 'Luke Skywalker'
+    SUCI_data written to file. Len: 340
+User: Command completed.
+"""
